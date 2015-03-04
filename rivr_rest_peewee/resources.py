@@ -23,8 +23,9 @@ class PeeweeResource(Resource):
         peewee.DecimalField: DecimalAttribute,
     }
 
-    def __init__(self, parameters=None, obj=None):
+    def __init__(self, parameters=None, request=None, obj=None):
         self.parameters = parameters
+        self.request = request
         self.obj = obj
 
     # Parameters
@@ -88,9 +89,9 @@ class PeeweeResource(Resource):
             value = getattr(obj, key)
 
             if isinstance(value, (list, tuple, peewee.SelectQuery)):
-                return (key, map(lambda o: resource(obj=o), value))
+                return (key, map(lambda o: resource(obj=o, request=self.request), value))
 
-            return (key, resource(obj=value))
+            return (key, resource(obj=value, request=self.request))
 
         return dict(map(relation, keys))
 
@@ -150,5 +151,5 @@ class PeeweeListResource(Resource):
 
     def get_relations(self):
         return {
-            self.relation: map(lambda obj: self.resource(obj=obj), self.get_objects())
+            self.relation: map(lambda obj: self.resource(obj=obj, request=self.request), self.get_objects())
         }
