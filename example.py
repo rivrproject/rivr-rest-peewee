@@ -1,3 +1,4 @@
+from datetime import datetime
 from rivr import serve
 from rivr_peewee import Database
 from rivr_rest import Router
@@ -15,6 +16,7 @@ database = Database(peewee.SqliteDatabase('example.sqlite'))
 
 class Task(database.Model):
     text = peewee.CharField()
+    created_at = peewee.DateTimeField(default=datetime.now)
 
     def __str__(self):
         return self.text
@@ -25,9 +27,6 @@ class Task(database.Model):
 class TaskResource(PeeweeResource):
     model = Task
     uri_template = '/tasks/{id}'
-
-    def get_attributes(self):
-        return { 'text': self.get_object().text }
 
 
 class TaskListResource(PeeweeListResource):

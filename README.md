@@ -14,31 +14,29 @@ $ pip install rivr-rest-peewee
 
 ```python
 from rivr_rest_peewee import PeeweeResource, PeeweeListResource
+
+class Task(Model):
+    text = peewee.CharField()
 ```
 
 Create a simple resource from a peewee model:
 
 ```python
-class UserResource(PeeweeResource):
-    model = User
-    url_template = '/users/{id}'
-
-    def get_attributes(self):
-        user = self.get_object()
-
-        return {
-            'user': user.name,
-        }
+class TaskResource(PeeweeResource):
+    model = Task
+    url_template = '/tasks/{id}'
 ```
+
+`PeeweeResource` automatically serialise the attributes of your model.
 
 Show a list of model resources:
 
 ```python
-class UserListResource(PeeweeListResource):
-    model = User
-    uri_template = '/users'
-    relation = 'users'
-    resource = UserResource
+class TaskListResource(PeeweeListResource):
+    model = Task
+    uri_template = '/tasks'
+    relation = 'tasks'
+    resource = TaskResource
 ```
 
 ## License
