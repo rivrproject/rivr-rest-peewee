@@ -29,10 +29,10 @@ class TaskResource(PeeweeResource):
 
 #### Attributes
 
-`PeeweeResource` automatically serialise the attributes of your model. You can alter the fields to use by implementing `get_attribute_keys()` on your resource as follows:
+`PeeweeResource` automatically serialises the attributes of your model. You can alter the fields used by implementing `get_attribute_keys()` on your resource as follows:
 
 ```python
-def get_attributes(self):
+def get_attribute_keys(self):
     return ('text',)
 ```
 
