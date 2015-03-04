@@ -27,7 +27,14 @@ class TaskResource(PeeweeResource):
     url_template = '/tasks/{id}'
 ```
 
-`PeeweeResource` automatically serialise the attributes of your model.
+`PeeweeResource` automatically serialise the attributes of your model. You can alter the fields to use by implementing `get_attribute_keys()` on your resource as follows:
+
+```python
+def get_attributes(self):
+    return ('text',)
+```
+
+Of course, if you don’t want automatic serialisation, you may create your own implementation of `get_attributes()` on your resource.
 
 Show a list of model resources:
 

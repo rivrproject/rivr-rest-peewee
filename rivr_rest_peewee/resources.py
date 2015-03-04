@@ -32,13 +32,24 @@ class PeeweeResource(Resource):
             self.slug_uri_parameter: getattr(self.get_object(), self.slug_field)
         }
 
-    def get_attributes(self):
-        fields = self.model._meta.fields
-        def field_filter(name):
+    def get_attribute_keys(self):
+        """
+        Returns all of the attribute keys to serialise into attributes. By
+        default, this will introspect your model and use all non-foreign key
+        field names.
+        """
+
+        fields = self.get_model()._meta.fields
+
+        def key_filter(name):
             return name != 'id' and not isinstance(fields[name], peewee.ForeignKeyField)
 
-        attributes = filter(field_filter, fields.keys())
+        return filter(key_filter, fields.keys())
+
+    def get_attributes(self):
+        attributes = self.get_attribute_keys()
         obj = self.get_object()
+        fields = self.get_model()._meta.fields
 
         def attribute(name):
             attribute = self.attribute_for_field(name, fields[name])
@@ -53,6 +64,13 @@ class PeeweeResource(Resource):
 
         if self.model:
             return self.model.select()
+
+    def get_model(self):
+        if self.model:
+            return self.model
+
+        if self.query:
+            return self.query.model_class
 
     def get_object(self):
         if self.obj:
