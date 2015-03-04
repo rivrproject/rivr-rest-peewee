@@ -9,6 +9,7 @@ setup(
     url='https://github.com/rivrproject/rivr-rest-peewee',
     packages=find_packages(),
     install_requires=[
+        'six',
         'rivr-peewee',
         'rivr-rest'
     ],
