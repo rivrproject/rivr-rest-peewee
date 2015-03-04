@@ -27,6 +27,8 @@ class TaskResource(PeeweeResource):
     url_template = '/tasks/{id}'
 ```
 
+#### Attributes
+
 `PeeweeResource` automatically serialise the attributes of your model. You can alter the fields to use by implementing `get_attribute_keys()` on your resource as follows:
 
 ```python
@@ -36,7 +38,39 @@ def get_attributes(self):
 
 Of course, if you don’t want automatic serialisation, you may create your own implementation of `get_attributes()` on your resource.
 
-Show a list of model resources:
+#### Relations
+
+`PeeweeResource` can automatically build relations to other models from foreign key or to-many relations, providing you supply it with a resource for that model:
+
+```python
+# Models
+class User(Model):
+    pass
+
+class Task(Model):
+    text = peewee.CharField()
+    creator = peewee.ForeignKeyField(User)
+
+# Resources
+class UserResource(PeeweeResource):
+    model = User
+    url_template = '/users/{id}'
+
+class TaskResource(PeeweeResource):
+    model = Task
+    url_template = '/tasks/{id}'
+
+    creator = UserResource
+```
+
+Again, you can alter the fields used by implementing `get_relation_keys()`:
+
+```python
+def get_relation_keys(self):
+    return ('creator',)
+```
+
+### Collection of peewee resources
 
 ```python
 class TaskListResource(PeeweeListResource):

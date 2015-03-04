@@ -27,10 +27,14 @@ class PeeweeResource(Resource):
         self.parameters = parameters
         self.obj = obj
 
+    # Parameters
+
     def get_parameters(self):
         return {
             self.slug_uri_parameter: getattr(self.get_object(), self.slug_field)
         }
+
+    # Attributes
 
     def get_attribute_keys(self):
         """
@@ -57,6 +61,40 @@ class PeeweeResource(Resource):
             return (name, representation)
 
         return dict(map(attribute, attributes))
+
+    # Relations
+
+    def get_relation_keys(self):
+        """
+        Returns all of the relation keys to serialise into relations. By
+        default, this will introspect your model and return all non-foreign key
+        field names where there is a property on your resource for the related
+        resource.
+        """
+
+        fields = self.get_model()._meta.fields
+        is_relation = lambda name: isinstance(fields[name], peewee.ForeignKeyField)
+        relations = filter(is_relation, fields.keys())
+        reverse_relations = self.get_model()._meta.reverse_rel.keys()
+        has_resource = lambda key: hasattr(self, key)
+        return filter(has_resource, relations + reverse_relations)
+
+    def get_relations(self):
+        keys = self.get_relation_keys()
+        obj = self.get_object()
+
+        def relation(key):
+            resource = getattr(self, key)
+            value = getattr(obj, key)
+
+            if isinstance(value, (list, tuple, peewee.SelectQuery)):
+                return (key, map(lambda o: resource(obj=o), value))
+
+            return (key, resource(obj=value))
+
+        return dict(map(relation, keys))
+
+    # Other
 
     def get_query(self):
         if self.query:
