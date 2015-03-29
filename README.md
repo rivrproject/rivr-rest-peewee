@@ -2,7 +2,7 @@
 
 [![Build Status](http://img.shields.io/travis/rivrproject/rivr-rest-peewee/master.svg?style=flat)](https://travis-ci.org/rivrproject/rivr-rest-peewee)
 
-Library for building REST APIs with rivr and peewee.
+Library for building REST APIs with rivr and peewee. Extends [rivr-rest](https://github.com/rivrproject/rivr-rest) to aid building resources from Peewee models.
 
 ## Installation
 
