@@ -1,5 +1,6 @@
 import inspect
 import peewee
+from rivr import Http404
 from rivr_rest import Resource
 from rivr_rest_peewee.attributes import *
 
@@ -112,12 +113,16 @@ class PeeweeResource(Resource):
             return self.query.model_class
 
     def get_object(self):
-        if self.obj:
-            return self.obj
+        if not self.obj:
+            lookup = self.parameters[self.slug_uri_parameter]
+            query = self.get_query().filter(**{self.slug_field: lookup})
 
-        lookup = self.parameters[self.slug_uri_parameter]
-        query = self.get_query().filter(**{self.slug_field: lookup})
-        return query.get()
+            try:
+                self.obj = query.get()
+            except self.query.model.DoesNotExist:
+                raise Http404('Object does not exist.')
+
+        return self.obj
 
     # Private
 
