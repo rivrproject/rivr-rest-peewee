@@ -100,10 +100,12 @@ class PeeweeResource(Resource):
 
     def get_query(self):
         if self.query:
-            return self.query
+            query = self.query
+        elif self.model:
+            query = self.model.select()
 
-        if self.model:
-            return self.model.select()
+        lookup = self.parameters[self.slug_uri_parameter]
+        return query.filter(**{self.slug_field: lookup})
 
     def get_model(self):
         if self.model:
@@ -114,12 +116,11 @@ class PeeweeResource(Resource):
 
     def get_object(self):
         if not self.obj:
-            lookup = self.parameters[self.slug_uri_parameter]
-            query = self.get_query().filter(**{self.slug_field: lookup})
+            query = self.get_query()
 
             try:
                 self.obj = query.get()
-            except self.query.model.DoesNotExist:
+            except query.model_class.DoesNotExist:
                 raise Http404('Object does not exist.')
 
         return self.obj
