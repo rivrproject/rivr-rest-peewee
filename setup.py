@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='rivr-rest-peewee',
-    version='0.1.0',
+    version='0.2.0',
     description='Library for building REST APIs with rivr and peewee.',
     url='https://github.com/rivrproject/rivr-rest-peewee',
     packages=find_packages(),
